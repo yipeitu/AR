@@ -20,9 +20,16 @@ public class TiltAround : MonoBehaviour
         // find speed based on delta
         float curSpeed = Time.deltaTime * speed;
         // first update the current rotation angles with input from acceleration axis
-        localRotation.y += Input.acceleration.x * curSpeed;
-        localRotation.x += Input.acceleration.y * curSpeed;
-
+        if(Input.acceleration.x > 0.9)
+        {
+            localRotation.x = 1;
+        }
+        if (Input.acceleration.x < -0.9)
+        {
+            localRotation.x = -1;
+        }
+        //localRotation.y += Input.acceleration.x * curSpeed;
+        //localRotation.x += Input.acceleration.y * curSpeed;
         // then rotate this object accordingly to the new angle
         transform.rotation = localRotation;
 
