@@ -6,7 +6,7 @@ public class TiltAround : MonoBehaviour
 {
     private Quaternion localRotation; // 
     public float speed = 1.0f; // ajustable speed from Inspector in Unity editor
-
+    public GameObject testObject;
     // Use this for initialization
     void Start()
     {
@@ -17,21 +17,48 @@ public class TiltAround : MonoBehaviour
 
     void Update() // runs 60 fps or so
     {
-        // find speed based on delta
-        float curSpeed = Time.deltaTime * speed;
-        // first update the current rotation angles with input from acceleration axis
-        if(Input.acceleration.x > 0.9)
+        Renderer rend = testObject.GetComponent<Renderer>();
+        //Create a new Material
+        Material material = new Material(Shader.Find("Standard"));
+        if (Input.touchCount > 0)
         {
-            localRotation.x = 1;
+
+            switch (Input.GetTouch(0).phase)
+            {
+                case TouchPhase.Began:
+                case TouchPhase.Moved:
+                    material.color = Color.green;
+                    //Fetch the Renderer from the GameObject
+                    Debug.Log(localRotation);
+                    Debug.Log(Input.acceleration);
+
+                    if (Input.acceleration.x < -0.9)
+                    {
+
+                        //localRotation = Quaternion.Euler(0, -90, 0);
+                        localRotation.y = -1;
+                    }
+                    else if (Input.acceleration.x > 0.9)
+                    {
+                        //localRotation = Quaternion.Euler(0, 90, 0);
+                        localRotation.y = 1;
+                    }
+                    else
+                    {
+                        localRotation = Quaternion.Euler(90, 0, 0);
+                        //localRotation.y = 0;
+                        //localRotation.y += Input.acceleration.x * curSpeed;
+                        //localRotation.x += Input.acceleration.y * curSpeed;
+                    }
+                    transform.rotation = localRotation;
+                    break;
+                case TouchPhase.Ended:
+                    material.color = Color.white;
+                    break;
+            }
+            //Switch to new material
+            rend.material = material;
         }
-        if (Input.acceleration.x < -0.9)
-        {
-            localRotation.x = -1;
-        }
-        //localRotation.y += Input.acceleration.x * curSpeed;
-        //localRotation.x += Input.acceleration.y * curSpeed;
-        // then rotate this object accordingly to the new angle
-        transform.rotation = localRotation;
 
     }
 
